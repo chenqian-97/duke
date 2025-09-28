@@ -1,25 +1,16 @@
 import java.util.Scanner;
-import java.util.Random;
 
 public class Qian {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        Random random = new Random();
         String line = "____________________________________________________________";
-        String[] task = new String[100];
+        Task[] tasks = new Task[100];
         int taskCount = 0;
 
         System.out.println(line);
         System.out.println(" Hello! I'm Qian");
         System.out.println(" What can I do for you?");
         System.out.println(line);
-
-        String[] responses = {
-                "Interesting!",
-                "Haha, got it!",
-                "Nice.",
-                "Added successfully!"
-        };
 
         while (true) {
             String input = scanner.nextLine().trim();
@@ -34,43 +25,56 @@ public class Qian {
                 if (taskCount == 0) {
                     System.out.println(" No tasks yet!");
                 } else {
+                    System.out.println(" Here are the tasks in your list:");
                     for (int i = 0; i < taskCount; i++) {
-                        System.out.println(" " + (i + 1) + ". " + task[i]);
+                        System.out.println(" " + (i + 1) + ". " + tasks[i]);
                     }
                 }
                 System.out.println(line);
+            } else if (input.startsWith("mark ")) {
+                try {
+                    int taskNumber = Integer.parseInt(input.substring(5)) - 1;
+                    if (taskNumber >= 0 && taskNumber < taskCount) {
+                        tasks[taskNumber].markAsDone();
+                        System.out.println(line);
+                        System.out.println(" Nice! I've marked this task as done:");
+                        System.out.println("   " + tasks[taskNumber]);
+                        System.out.println(line);
+                    } else {
+                        System.out.println(" Invalid task number!");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println(" Please enter a valid number after 'mark'.");
+                }
+
+            } else if (input.startsWith("unmark ")) {
+                try {
+                    int taskNumber = Integer.parseInt(input.substring(7)) - 1;
+                    if (taskNumber >= 0 && taskNumber < taskCount) {
+                        tasks[taskNumber].markAsNotDone();
+                        System.out.println(line);
+                        System.out.println(" OK, I've marked this task as not done yet:");
+                        System.out.println(" " + tasks[taskNumber]);
+                        System.out.println(line);
+                    } else {
+                        System.out.println(" Invalid task number!");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println(" Please enter a valid number after 'unmark'.");
+                }
+
             } else {
-                // 添加任务
-                if (taskCount < task.length) {
-                    task[taskCount] = input;
+                if (taskCount < tasks.length) {
+                    tasks[taskCount] = new Task(input);
                     taskCount++;
                     System.out.println(line);
-                    String response = responses[random.nextInt(responses.length)];
-                    System.out.println(" added: " + input + " (" + response + ")");
+                    System.out.println(" added: " + input);
                     System.out.println(line);
                 } else {
-                    System.out.println(line);
-                    System.out.println(" Task list is full! Cannot add more.");
-                    System.out.println(line);
+                    System.out.println(" Task list is full!");
                 }
             }
 
-//            if (input.equalsIgnoreCase("hello")) {
-//                System.out.println(line);
-//                System.out.println(" Hello there! Nice to chat with you!");
-//                System.out.println(line);
-//                continue;
-//            } else if (input.equalsIgnoreCase("how are you")) {
-//                System.out.println(line);
-//                System.out.println(" I'm just a chatbot, but I'm feeling great!");
-//                System.out.println(line);
-//                continue;
-//            }
-//
-//            String response = responses[random.nextInt(responses.length)];
-//            System.out.println(line);
-//            System.out.println(response + (response.equals("You said: ") ? input : ""));
-//            System.out.println(line);
         }
 
         scanner.close();
