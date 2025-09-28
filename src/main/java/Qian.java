@@ -63,16 +63,47 @@ public class Qian {
                     System.out.println(" Please enter a valid number after 'unmark'.");
                 }
 
-            } else {
-                if (taskCount < tasks.length) {
-                    tasks[taskCount] = new Task(input);
-                    taskCount++;
-                    System.out.println(line);
-                    System.out.println(" added: " + input);
-                    System.out.println(line);
-                } else {
-                    System.out.println(" Task list is full!");
+            } else if (input.startsWith("todo ")) {
+                String desc = input.substring(5).trim();
+                Task t = new Todo(desc);
+                tasks[taskCount++] = t;
+                System.out.println(line);
+                System.out.println(" Got it. I've added this task:");
+                System.out.println("   " + t);
+                System.out.println(" Now you have " + taskCount + " tasks in the list.");
+                System.out.println(line);
+
+            } else if (input.startsWith("deadline ")) {
+                String[] parts = input.substring(9).split("/by", 2);
+                String desc = parts[0].trim();
+                String by = (parts.length > 1) ? parts[1].trim() : "unspecified";
+                Task t = new Deadline(desc, by);
+                tasks[taskCount++] = t;
+                System.out.println(line);
+                System.out.println(" Got it. I've added this task:");
+                System.out.println("   " + t);
+                System.out.println(" Now you have " + taskCount + " tasks in the list.");
+                System.out.println(line);
+
+            } else if (input.startsWith("event ")) {
+                String[] parts = input.substring(6).split("/from|/to");
+                if (parts.length < 3) {
+                    System.out.println(" Event format: event <desc> /from <start> /to <end>");
+                    continue;
                 }
+                String desc = parts[0].trim();
+                String from = parts[1].trim();
+                String to = parts[2].trim();
+                Task t = new Event(desc, from, to);
+                tasks[taskCount++] = t;
+                System.out.println(line);
+                System.out.println(" Got it. I've added this task:");
+                System.out.println("   " + t);
+                System.out.println(" Now you have " + taskCount + " tasks in the list.");
+                System.out.println(line);
+
+            } else {
+                System.out.println(" Unknown command: " + input);
             }
 
         }
