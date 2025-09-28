@@ -1,11 +1,12 @@
 import java.util.Scanner;
 
 public class Qian {
+    private static Task[] tasks = new Task[100];
+    private static int taskCount = 0;
+    public static String line = "____________________________________________________________";
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        String line = "____________________________________________________________";
-        Task[] tasks = new Task[100];
-        int taskCount = 0;
 
         System.out.println(line);
         System.out.println(" Hello! I'm Qian");
@@ -15,99 +16,131 @@ public class Qian {
         while (true) {
             String input = scanner.nextLine().trim();
 
-            if (input.equalsIgnoreCase("bye")) {
-                System.out.println(line);
-                System.out.println(" Bye. Hope to see you again soon!");
-                System.out.println(line);
-                break;
-            } else if (input.equalsIgnoreCase("list")) {
-                System.out.println(line);
-                if (taskCount == 0) {
-                    System.out.println(" No tasks yet!");
+            try {
+                if (input.equals("bye")) {
+                    System.out.println(line);
+                    System.out.println(" Bye. Hope to see you again soon!");
+                    System.out.println(line);
+                    break;
+                } else if (input.equals("list")) {
+                    printTasks();
+                } else if (input.startsWith("mark")) {
+                    handleMark(input);
+                } else if (input.startsWith("unmark")) {
+                    handleUnmark(input);
+                } else if (input.startsWith("todo")) {
+                    handleTodo(input);
+                } else if (input.startsWith("deadline")) {
+                    handleDeadline(input);
+                } else if (input.startsWith("event")) {
+                    handleEvent(input);
                 } else {
-                    System.out.println(" Here are the tasks in your list:");
-                    for (int i = 0; i < taskCount; i++) {
-                        System.out.println(" " + (i + 1) + ". " + tasks[i]);
-                    }
+                    throw new QianException("Hmmm... I don't understand that command.");
                 }
+            } catch (QianException e) {
                 System.out.println(line);
-            } else if (input.startsWith("mark ")) {
-                try {
-                    int taskNumber = Integer.parseInt(input.substring(5)) - 1;
-                    if (taskNumber >= 0 && taskNumber < taskCount) {
-                        tasks[taskNumber].markAsDone();
-                        System.out.println(line);
-                        System.out.println(" Nice! I've marked this task as done:");
-                        System.out.println("   " + tasks[taskNumber]);
-                        System.out.println(line);
-                    } else {
-                        System.out.println(" Invalid task number!");
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println(" Please enter a valid number after 'mark'.");
-                }
-
-            } else if (input.startsWith("unmark ")) {
-                try {
-                    int taskNumber = Integer.parseInt(input.substring(7)) - 1;
-                    if (taskNumber >= 0 && taskNumber < taskCount) {
-                        tasks[taskNumber].markAsNotDone();
-                        System.out.println(line);
-                        System.out.println(" OK, I've marked this task as not done yet:");
-                        System.out.println(" " + tasks[taskNumber]);
-                        System.out.println(line);
-                    } else {
-                        System.out.println(" Invalid task number!");
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println(" Please enter a valid number after 'unmark'.");
-                }
-
-            } else if (input.startsWith("todo ")) {
-                String desc = input.substring(5).trim();
-                Task t = new Todo(desc);
-                tasks[taskCount++] = t;
+                System.out.println(" OOPS!!! " + e.getMessage());
                 System.out.println(line);
-                System.out.println(" Got it. I've added this task:");
-                System.out.println("   " + t);
-                System.out.println(" Now you have " + taskCount + " tasks in the list.");
-                System.out.println(line);
-
-            } else if (input.startsWith("deadline ")) {
-                String[] parts = input.substring(9).split("/by", 2);
-                String desc = parts[0].trim();
-                String by = (parts.length > 1) ? parts[1].trim() : "unspecified";
-                Task t = new Deadline(desc, by);
-                tasks[taskCount++] = t;
-                System.out.println(line);
-                System.out.println(" Got it. I've added this task:");
-                System.out.println("   " + t);
-                System.out.println(" Now you have " + taskCount + " tasks in the list.");
-                System.out.println(line);
-
-            } else if (input.startsWith("event ")) {
-                String[] parts = input.substring(6).split("/from|/to");
-                if (parts.length < 3) {
-                    System.out.println(" Event format: event <desc> /from <start> /to <end>");
-                    continue;
-                }
-                String desc = parts[0].trim();
-                String from = parts[1].trim();
-                String to = parts[2].trim();
-                Task t = new Event(desc, from, to);
-                tasks[taskCount++] = t;
-                System.out.println(line);
-                System.out.println(" Got it. I've added this task:");
-                System.out.println("   " + t);
-                System.out.println(" Now you have " + taskCount + " tasks in the list.");
-                System.out.println(line);
-
-            } else {
-                System.out.println(" Unknown command: " + input);
             }
 
         }
 
         scanner.close();
     }
+
+    private static void printTasks() {
+        System.out.println(line);
+        if (taskCount == 0) {
+            System.out.println(" No tasks yet!");
+        } else {
+            System.out.println(" Here are the tasks in your list:");
+            for (int i = 0; i < taskCount; i++) {
+                System.out.println(" " + (i + 1) + ". " + tasks[i]);
+            }
+        }
+        System.out.println(line);
+    }
+
+    private static void handleMark(String input) throws QianException {
+        try {
+            int taskNumber = Integer.parseInt(input.split(" ")[1]) - 1;
+            if (taskNumber < 0 || taskNumber >= taskCount) {
+                throw new QianException("That task number is invalid!");
+            }
+            tasks[taskNumber].markAsDone();
+            System.out.println(line);
+            System.out.println(" Nice! I've marked this task as done:");
+            System.out.println("   " + tasks[taskNumber]);
+            System.out.println(line);
+        } catch (NumberFormatException e) {
+            System.out.println(" Please enter a valid number after 'mark'.");
+        }
+    }
+
+    private static void handleUnmark(String input) throws QianException {
+        try {
+            int taskNumber = Integer.parseInt(input.split(" ")[1]) - 1;
+            if (taskNumber < 0 || taskNumber >= taskCount) {
+                throw new QianException("That task number is invalid!");
+            }
+            tasks[taskNumber].markAsNotDone();
+            System.out.println(line);
+            System.out.println(" OK, I've marked this task as not done yet:");
+            System.out.println(" " + tasks[taskNumber]);
+            System.out.println(line);
+        } catch (NumberFormatException e) {
+            System.out.println(" Please enter a valid number after 'unmark'.");
+        }
+    }
+
+    private static void handleTodo(String input) throws QianException {
+        String desc = input.replaceFirst("todo", "").trim();
+        if (desc.isEmpty()) {
+            throw new QianException("Please enter the description of a todo task.");
+        }
+        tasks[taskCount] = new Todo(desc);
+        taskCount++;
+        printAddedTask(tasks[taskCount - 1]);
+    }
+
+    private static void handleDeadline(String input) throws QianException {
+        if (!input.contains("/by")) {
+            throw new QianException("A deadline must have a /by part!");
+        }
+        String[] parts = input.split("/by", 2);
+        String description = parts[0].replaceFirst("deadline", "").trim();
+        String by = parts[1].trim();
+        if (description.isEmpty() || by.isEmpty()) {
+            throw new QianException("The description or /by part of a deadline cannot be empty!");
+        }
+        tasks[taskCount] = new Deadline(description, by);
+        taskCount++;
+        printAddedTask(tasks[taskCount - 1]);
+    }
+
+    private static void handleEvent(String input) throws QianException {
+        if (!input.contains("/from") || !input.contains("/to")) {
+            throw new QianException("An event must have /from and /to parts!");
+        }
+        String[] firstSplit = input.split("/from", 2);
+        String description = firstSplit[0].replaceFirst("event", "").trim();
+        String[] secondSplit = firstSplit[1].split("/to", 2);
+        String from = secondSplit[0].trim();
+        String to = secondSplit[1].trim();
+        if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
+            throw new QianException("The description, /from, or /to part of an event cannot be empty!");
+        }
+        tasks[taskCount] = new Event(description, from, to);
+        taskCount++;
+        printAddedTask(tasks[taskCount - 1]);
+    }
+
+    private static void printAddedTask(Task task) {
+        System.out.println(line);
+        System.out.println(" Got it. I've added this task:");
+        System.out.println("   " + task);
+        System.out.println(" Now you have " + taskCount + " tasks in the list.");
+        System.out.println(line);
+    }
+
 }
