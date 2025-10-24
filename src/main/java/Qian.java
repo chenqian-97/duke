@@ -1,8 +1,9 @@
 import java.util.Scanner;
+import java.util.ArrayList;
+
 
 public class Qian {
-    private static Task[] tasks = new Task[100];
-    private static int taskCount = 0;
+    private static ArrayList<Task> tasks = new ArrayList<>();
     public static String line = "____________________________________________________________";
 
     public static void main(String[] args) {
@@ -34,7 +35,10 @@ public class Qian {
                     handleDeadline(input);
                 } else if (input.startsWith("event")) {
                     handleEvent(input);
-                } else {
+                } else if (input.startsWith("delete ")) {
+                    handleDelete(input);
+                }
+                else {
                     throw new QianException("Hmmm... I don't understand that command.");
                 }
             } catch (QianException e) {
@@ -48,14 +52,56 @@ public class Qian {
         scanner.close();
     }
 
+    private static void handleDelete(String input) throws QianException {
+        String[] parts = input.split(" ");
+        if (parts.length < 2) {
+            throw new QianException("Please specify which task number to delete!");
+        }
+        int taskNumber;
+        try {
+            taskNumber = Integer.parseInt(parts[1]) - 1;
+        } catch (NumberFormatException e) {
+            throw new QianException("The task number must be a valid integer!");
+        }
+
+        if (taskNumber < 0 || taskNumber >= tasks.size()) {
+            throw new QianException("That task number doesn't exist!");
+        }
+
+        Task removedTask = tasks.remove(taskNumber);
+
+        System.out.println("____________________________________________________________");
+        System.out.println(" Noted. I've removed this task:");
+        System.out.println("   " + removedTask);
+        System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
+        System.out.println("____________________________________________________________");
+    }
+
+    private static int parseTaskNumber(String input) throws QianException {
+        String[] parts = input.split(" ");
+        if (parts.length < 2) {
+            throw new QianException("Please specify a task number!");
+        }
+        int taskNumber;
+        try {
+            taskNumber = Integer.parseInt(parts[1]) - 1;
+        } catch (NumberFormatException e) {
+            throw new QianException("Task number must be an integer!");
+        }
+        if (taskNumber < 0 || taskNumber >= tasks.size()) {
+            throw new QianException("That task number is invalid!");
+        }
+        return taskNumber;
+    }
+
     private static void printTasks() {
         System.out.println(line);
-        if (taskCount == 0) {
+        if (tasks.isEmpty()) {
             System.out.println(" No tasks yet!");
         } else {
             System.out.println(" Here are the tasks in your list:");
-            for (int i = 0; i < taskCount; i++) {
-                System.out.println(" " + (i + 1) + ". " + tasks[i]);
+            for (int i = 0; i < tasks.size(); i++) {
+                System.out.println((i + 1) + "." + tasks.get(i));
             }
         }
         System.out.println(line);
@@ -63,14 +109,12 @@ public class Qian {
 
     private static void handleMark(String input) throws QianException {
         try {
-            int taskNumber = Integer.parseInt(input.split(" ")[1]) - 1;
-            if (taskNumber < 0 || taskNumber >= taskCount) {
-                throw new QianException("That task number is invalid!");
-            }
-            tasks[taskNumber].markAsDone();
+            int taskNumber = parseTaskNumber(input);
+            Task task = tasks.get(taskNumber);
+            task.markAsDone();
             System.out.println(line);
             System.out.println(" Nice! I've marked this task as done:");
-            System.out.println("   " + tasks[taskNumber]);
+            System.out.println("   " + task);
             System.out.println(line);
         } catch (NumberFormatException e) {
             System.out.println(" Please enter a valid number after 'mark'.");
@@ -79,14 +123,12 @@ public class Qian {
 
     private static void handleUnmark(String input) throws QianException {
         try {
-            int taskNumber = Integer.parseInt(input.split(" ")[1]) - 1;
-            if (taskNumber < 0 || taskNumber >= taskCount) {
-                throw new QianException("That task number is invalid!");
-            }
-            tasks[taskNumber].markAsNotDone();
+            int taskNumber = parseTaskNumber(input);
+            Task task = tasks.get(taskNumber);
+            task.markAsNotDone();
             System.out.println(line);
             System.out.println(" OK, I've marked this task as not done yet:");
-            System.out.println(" " + tasks[taskNumber]);
+            System.out.println(" " + task);
             System.out.println(line);
         } catch (NumberFormatException e) {
             System.out.println(" Please enter a valid number after 'unmark'.");
@@ -98,9 +140,8 @@ public class Qian {
         if (desc.isEmpty()) {
             throw new QianException("Please enter the description of a todo task.");
         }
-        tasks[taskCount] = new Todo(desc);
-        taskCount++;
-        printAddedTask(tasks[taskCount - 1]);
+        tasks.add(new Todo(desc));
+        printAddedTask(tasks.get(tasks.size() - 1));
     }
 
     private static void handleDeadline(String input) throws QianException {
@@ -113,9 +154,8 @@ public class Qian {
         if (description.isEmpty() || by.isEmpty()) {
             throw new QianException("The description or /by part of a deadline cannot be empty!");
         }
-        tasks[taskCount] = new Deadline(description, by);
-        taskCount++;
-        printAddedTask(tasks[taskCount - 1]);
+        tasks.add(new Deadline(description, by));
+        printAddedTask(tasks.get(tasks.size() - 1));
     }
 
     private static void handleEvent(String input) throws QianException {
@@ -130,16 +170,15 @@ public class Qian {
         if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
             throw new QianException("The description, /from, or /to part of an event cannot be empty!");
         }
-        tasks[taskCount] = new Event(description, from, to);
-        taskCount++;
-        printAddedTask(tasks[taskCount - 1]);
+        tasks.add(new Event(description, from, to));
+        printAddedTask(tasks.get(tasks.size() - 1));
     }
 
     private static void printAddedTask(Task task) {
         System.out.println(line);
         System.out.println(" Got it. I've added this task:");
         System.out.println("   " + task);
-        System.out.println(" Now you have " + taskCount + " tasks in the list.");
+        System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
         System.out.println(line);
     }
 
