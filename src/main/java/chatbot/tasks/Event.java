@@ -1,21 +1,33 @@
 package chatbot.tasks;
 
-public class Event extends Task {
-    public String from;
-    public String to;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import chatbot.DateTimeParser;
+import chatbot.QianException;
 
-    public Event(String description, String from, String to) {
+public class Event extends Task {
+    protected LocalDateTime from;
+    protected LocalDateTime to;
+
+    public Event(String description, String from, String to) throws QianException {
         super(description);
-        this.from = from;
-        this.to = to;
+        this.from = DateTimeParser.parse(from);
+        this.to = DateTimeParser.parse(to);
     }
 
     @Override
     public String toString() {
-        return "[E]" + super.toString() + " (from: " + from + " to: " + to + ")";
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("MMM d yyyy h:mma");
+        return "[E]" + super.toString()
+                + " (from: " + from.format(fmt)
+                + " to: " + to.format(fmt) + ")";
     }
 
-    public String getDuration() {
-        return from + " to: " + to;
+    public String getFromRaw() {
+        return from.toString();
+    }
+
+    public String getToRaw() {
+        return to.toString();
     }
 }

@@ -37,20 +37,30 @@ public class Storage {
             String description = parts[2];
             Task t = null;
 
-            switch (type) {
-                case "T":
-                    t = new Todo(description);
-                    break;
-                case "D":
-                    if (parts.length >= 4) t = new Deadline(description, parts[3]);
-                    break;
-                case "E":
-                    if (parts.length >= 5) t = new Event(description, parts[3], parts[4]);
-                    break;
-            }
+            try {
+                switch (type) {
+                    case "T":
+                        t = new Todo(description);
+                        break;
+                    case "D":
+                        if (parts.length >= 4) {
+                            t = new Deadline(description, parts[3]); // constructor will parse LocalDate
+                        }
+                        break;
+                    case "E":
+                        if (parts.length >= 5) {
+                            t = new Event(description, parts[3], parts[4]); // both will parse LocalDate
+                        }
+                        break;
+                    default:
+                        System.out.println("Unknown task type found: " + type);
+                }
 
-            if (t != null && isDone) t.markAsDone();
-            if (t != null) tasks.add(t);
+                if (t != null && isDone) t.markAsDone();
+                if (t != null) tasks.add(t);
+            } catch (QianException e) {
+                System.out.println("⚠️ Skipping corrupted line: " + line);
+            }
         }
         scanner.close();
         return tasks;
@@ -63,12 +73,14 @@ public class Storage {
 
             if (t instanceof Todo) {
                 line = "T | " + (t.isDone ? "1" : "0") + " | " + t.description;
+
             } else if (t instanceof Deadline) {
                 Deadline d = (Deadline) t;
-                line = "D | " + (d.isDone ? "1" : "0") + " | " + d.description + " | " + d.getBy();
+                line = "D | " + (d.isDone ? "1" : "0") + " | " + d.description + " | " + d.getByRaw();
+
             } else if (t instanceof Event) {
                 Event e = (Event) t;
-                line = "E | " + (e.isDone ? "1" : "0") + " | " + e.description + " | " + e.from + " | " + e.to;
+                line = "E | " + (e.isDone ? "1" : "0") + " | " + e.description + " | " + e.getFromRaw() + " | " + e.getToRaw();
             }
 
             fw.write(line + System.lineSeparator());

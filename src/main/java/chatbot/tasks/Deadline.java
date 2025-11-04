@@ -1,19 +1,28 @@
 package chatbot.tasks;
 
-public class Deadline extends Task {
-    protected String by;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import chatbot.DateTimeParser;
+import chatbot.QianException;
 
-    public Deadline(String description, String by) {
+public class Deadline extends Task {
+    protected LocalDateTime by;
+
+    public Deadline(String description, String by) throws QianException {
         super(description);
-        this.by = by;
+        this.by = DateTimeParser.parse(by);
     }
 
     public String getBy() {
-        return by;
+        return by.format(DateTimeFormatter.ofPattern("MMM d yyyy h:mma"));
+    }
+
+    public String getByRaw() {
+        return by.toString(); // 2025-11-10T18:30
     }
 
     @Override
     public String toString() {
-        return "[D]" + super.toString() + " (by: " + by + ")";
+        return "[D]" + super.toString() + " (by: " + getBy() + ")";
     }
 }
