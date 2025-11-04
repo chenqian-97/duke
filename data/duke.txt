@@ -1,3 +1,5 @@
-T | 1 | implement project
-D | 0 | quiz | this weekend
+T | 0 | implement project
 E | 0 | farewell lunch | 9am | 11pm
+T | 0 | taskABC
+D | 0 | exam | end of this month
+E | 0 | eventABC | Mon | Fri

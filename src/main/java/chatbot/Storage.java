@@ -1,7 +1,6 @@
 package chatbot;
 
 import chatbot.tasks.*;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -22,7 +21,7 @@ public class Storage {
         if (!file.exists()) {
             file.getParentFile().mkdirs();
             file.createNewFile();
-            return tasks; // return empty list on first startup
+            return tasks;
         }
 
         Scanner scanner = new Scanner(file);
@@ -31,7 +30,7 @@ public class Storage {
             if (line.isEmpty()) continue;
 
             String[] parts = line.split(" \\| ");
-            if (parts.length < 3) continue; // skip invalid lines
+            if (parts.length < 3) continue;
 
             String type = parts[0];
             boolean isDone = parts[1].equals("1");
@@ -43,24 +42,15 @@ public class Storage {
                     t = new Todo(description);
                     break;
                 case "D":
-                    if (parts.length >= 4) {
-                        t = new Deadline(description, parts[3]);
-                    }
+                    if (parts.length >= 4) t = new Deadline(description, parts[3]);
                     break;
                 case "E":
-                    if (parts.length >= 5) {
-                        t = new Event(description, parts[3], parts[4]);
-                    }
+                    if (parts.length >= 5) t = new Event(description, parts[3], parts[4]);
                     break;
             }
 
-            if (t != null && isDone) {
-                t.markAsDone();
-            }
-
-            if (t != null) {
-                tasks.add(t);
-            }
+            if (t != null && isDone) t.markAsDone();
+            if (t != null) tasks.add(t);
         }
         scanner.close();
         return tasks;

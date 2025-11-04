@@ -18,5 +18,4 @@ public class Event extends Task {
     public String getDuration() {
         return from + " to: " + to;
     }
-
 }
