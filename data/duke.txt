@@ -1,0 +1,3 @@
+T | 1 | implement project
+D | 0 | quiz | this weekend
+E | 0 | farewell lunch | 9am | 11pm
