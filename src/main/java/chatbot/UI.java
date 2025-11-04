@@ -1,7 +1,11 @@
 package chatbot;
 
 import chatbot.tasks.Task;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class Ui {
     private static final String LINE = "____________________________________________________________";
@@ -58,4 +62,18 @@ public class Ui {
         }
         showLine();
     }
+
+    public void showFreeTime(Optional<LocalDateTime[]> slot, int hours) {
+        showLine();
+        if (slot.isEmpty()) {
+            System.out.println("Sorry, I couldn't find any free slots right now.");
+        } else {
+            LocalDateTime[] range = slot.get();
+            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            System.out.println("Your next " + hours + "-hour free slot is on:");
+            System.out.println(range[0].format(fmt) + " to " + range[1].format(fmt));
+        }
+        showLine();
+    }
+
 }

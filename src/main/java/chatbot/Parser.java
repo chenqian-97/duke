@@ -1,5 +1,8 @@
 package chatbot;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class Parser {
     public String[] parse(String input) {
         return input.split(" ", 2);
@@ -50,4 +53,30 @@ public class Parser {
         }
         return parts[1];
     }
+
+    public static boolean isFreeTimeQuery(String input) {
+        String lower = input.toLowerCase();
+        return lower.contains("free") && lower.contains("hour");
+    }
+
+    public static int extractHoursFromSentence(String input) throws QianException {
+        Pattern pattern = Pattern.compile("(\\d+)\\s*-?\\s*hour");
+        Matcher matcher = pattern.matcher(input.toLowerCase());
+        if (matcher.find()) {
+            return Integer.parseInt(matcher.group(1));
+        } else {
+            throw new QianException("I couldn't find the number of hours in your request. Please mention it clearly (e.g., '4 hour free slot').");
+        }
+    }
+
+    public static int parseFreeHours(String fullCommand) throws QianException {
+        String[] parts = fullCommand.trim().split(" ", 2);
+        if (parts.length < 2) throw new QianException("Please specify how many hours you need free!");
+        try {
+            return Integer.parseInt(parts[1]);
+        } catch (NumberFormatException e) {
+            throw new QianException("Invalid number of hours: " + parts[1]);
+        }
+    }
+
 }

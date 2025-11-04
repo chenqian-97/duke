@@ -2,6 +2,8 @@ package chatbot.tasks;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
+
 import chatbot.DateTimeParser;
 import chatbot.QianException;
 
@@ -30,4 +32,10 @@ public class Event extends Task {
     public String getToRaw() {
         return to.toString();
     }
+
+    @Override
+    public Optional<LocalDateTime[]> getBusyPeriod() {
+        return Optional.of(new LocalDateTime[]{from, to});
+    }
+
 }

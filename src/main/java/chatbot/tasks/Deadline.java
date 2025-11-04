@@ -2,6 +2,8 @@ package chatbot.tasks;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
+
 import chatbot.DateTimeParser;
 import chatbot.QianException;
 
@@ -25,4 +27,12 @@ public class Deadline extends Task {
     public String toString() {
         return "[D]" + super.toString() + " (by: " + getBy() + ")";
     }
+
+    @Override
+    public Optional<LocalDateTime[]> getBusyPeriod() {
+        LocalDateTime start = by.minusHours(1);
+        LocalDateTime end = by;
+        return Optional.of(new LocalDateTime[]{start, end});
+    }
+
 }

@@ -86,8 +86,19 @@ public class Qian {
                         ui.showFindResults(tasks.findTasks(keyword));
                         break;
 
+                    case "free":
+                        int hours = Parser.parseFreeHours(input);
+                        ui.showFreeTime(tasks.findFreeSlot(hours), hours);
+                        break;
+
                     default:
-                        throw new QianException("Hmmm... I don't understand that command.");
+                        if (Parser.isFreeTimeQuery(input)) {
+                            int hours_2 = Parser.extractHoursFromSentence(input);
+                            ui.showFreeTime(tasks.findFreeSlot(hours_2), hours_2);
+                        } else {
+                            throw new QianException("Hmmm... I don't understand that command.");
+                        }
+
                 }
 
                 storage.save(tasks.getTasks());

@@ -1,6 +1,9 @@
 package chatbot.tasks;
 
-public class Task {
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+public abstract class Task {
     public String description;
     public boolean isDone;
 
@@ -19,6 +22,10 @@ public class Task {
 
     public void markAsNotDone() {
         this.isDone = false;
+    }
+
+    public Optional<LocalDateTime[]> getBusyPeriod() {
+        return Optional.empty(); // default: none
     }
 
     @Override

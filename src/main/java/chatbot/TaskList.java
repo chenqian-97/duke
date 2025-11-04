@@ -1,6 +1,9 @@
 package chatbot;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Optional;
+
 import chatbot.tasks.*;
 
 public class TaskList {
@@ -77,4 +80,40 @@ public class TaskList {
         }
         return matching;
     }
+
+    public Optional<LocalDateTime[]> findFreeSlot(int hours) {
+        ArrayList<LocalDateTime[]> busy = new ArrayList<>();
+
+        // collect all busy periods
+        for (Task t : tasks) {
+            t.getBusyPeriod().ifPresent(busy::add);
+        }
+
+        // if no busy events, free anytime
+        if (busy.isEmpty()) {
+            LocalDateTime now = LocalDateTime.now();
+            return Optional.of(new LocalDateTime[]{now, now.plusHours(hours)});
+        }
+
+        // sort by start time
+        busy.sort((a, b) -> a[0].compareTo(b[0]));
+
+        // start checking from now
+        LocalDateTime cursor = LocalDateTime.now();
+
+        for (LocalDateTime[] period : busy) {
+            if (cursor.plusHours(hours).isBefore(period[0])) {
+                // found gap before this busy period
+                return Optional.of(new LocalDateTime[]{cursor, cursor.plusHours(hours)});
+            }
+            // move cursor to end of current busy block
+            if (cursor.isBefore(period[1])) {
+                cursor = period[1];
+            }
+        }
+
+        // if no gap before last busy period, free after it
+        return Optional.of(new LocalDateTime[]{cursor, cursor.plusHours(hours)});
+    }
+
 }
