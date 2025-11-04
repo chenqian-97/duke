@@ -1,5 +1,8 @@
 package chatbot;
 
+import chatbot.tasks.Task;
+import java.util.ArrayList;
+
 public class Ui {
     private static final String LINE = "____________________________________________________________";
 
@@ -40,6 +43,19 @@ public class Ui {
         System.out.println(" Got it. I've added this task:");
         System.out.println("   " + t);
         System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
+        showLine();
+    }
+
+    public void showFindResults(ArrayList<Task> matching) {
+        showLine();
+        if (matching.isEmpty()) {
+            System.out.println("No matching tasks found.");
+        } else {
+            System.out.println("Here are the matching tasks in your list:");
+            for (int i = 0; i < matching.size(); i++) {
+                System.out.println((i + 1) + "." + matching.get(i));
+            }
+        }
         showLine();
     }
 }

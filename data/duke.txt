@@ -1,1 +1,4 @@
 T | 0 | taskABC
+T | 0 | bookBCD
+T | 0 | task CDE
+T | 0 | task EFG

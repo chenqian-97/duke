@@ -81,6 +81,11 @@ public class Qian {
                         tasks.deleteTask(parser.getTaskNumber(input));
                         break;
 
+                    case "find":
+                        String keyword = Parser.parseKeyword(input);
+                        ui.showFindResults(tasks.findTasks(keyword));
+                        break;
+
                     default:
                         throw new QianException("Hmmm... I don't understand that command.");
                 }

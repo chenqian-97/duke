@@ -42,4 +42,12 @@ public class Parser {
             throw new QianException("The description, /from, or /to part cannot be empty!");
         return new String[]{desc, time[0].trim(), time[1].trim()};
     }
+
+    public static String parseKeyword(String input) throws QianException {
+        String[] parts = input.trim().split(" ", 2);
+        if (parts.length < 2 || parts[1].isBlank()) {
+            throw new QianException("Please provide a keyword to search for!");
+        }
+        return parts[1];
+    }
 }
