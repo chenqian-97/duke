@@ -1,3 +1,7 @@
+package chatbot;
+
+import chatbot.tasks.*;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;

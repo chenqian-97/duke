@@ -1,3 +1,6 @@
+package chatbot;
+import chatbot.tasks.*;
+
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.io.IOException;
@@ -11,7 +14,7 @@ public class Qian {
     public static void main(String[] args) {
 
         System.out.println(line);
-        System.out.println(" Hello! I'm Qian");
+        System.out.println(" Hello! I'm chatbot.Qian");
         System.out.println(" What can I do for you?");
         System.out.println(line);
 
@@ -108,7 +111,7 @@ public class Qian {
         try {
             taskNumber = Integer.parseInt(parts[1]) - 1;
         } catch (NumberFormatException e) {
-            throw new QianException("Task number must be an integer!");
+            throw new QianException("chatbot.tasks.Task number must be an integer!");
         }
         if (taskNumber < 0 || taskNumber >= tasks.size()) {
             throw new QianException("That task number is invalid!");
