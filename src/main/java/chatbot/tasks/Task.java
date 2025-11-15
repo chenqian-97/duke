@@ -1,11 +1,25 @@
 package chatbot.tasks;
 
+import chatbot.QianException;
+
 import java.time.LocalDateTime;
 import java.util.Optional;
 
 public abstract class Task {
     public String description;
     public boolean isDone;
+    protected int priority = 3; // default: low priority
+
+    public void setPriority(int level) throws QianException {
+        if (level < 1 || level > 3) {
+            throw new QianException("Priority must be 1 (high), 2 (medium), or 3 (low).");
+        }
+        this.priority = level;
+    }
+
+    public int getPriority() {
+        return this.priority;
+    }
 
     public Task(String description) {
         this.description = description;
@@ -30,6 +44,6 @@ public abstract class Task {
 
     @Override
     public String toString() {
-        return "[" + getStatusIcon() + "] " + description;
+        return "[" + getStatusIcon() + "] " + description + " (P" + priority + ")";
     }
 }

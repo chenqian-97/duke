@@ -116,4 +116,14 @@ public class TaskList {
         return Optional.of(new LocalDateTime[]{cursor, cursor.plusHours(hours)});
     }
 
+    public Task updatePriority(int taskIndex, int priority) throws QianException {
+        if (taskIndex < 0 || taskIndex >= tasks.size()) {
+            throw new QianException("Task number is out of range!");
+        }
+
+        Task task = tasks.get(taskIndex);
+        task.setPriority(priority);
+        return task;
+    }
+
 }

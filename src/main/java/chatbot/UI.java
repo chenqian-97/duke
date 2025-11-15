@@ -76,4 +76,11 @@ public class Ui {
         showLine();
     }
 
+    public void showPriorityUpdated(Task task) {
+        showLine();
+        System.out.println("Got it! I've updated the task priority:");
+        System.out.println("  " + task);
+        showLine();
+    }
+
 }

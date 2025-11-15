@@ -91,6 +91,13 @@ public class Qian {
                         ui.showFreeTime(tasks.findFreeSlot(hours), hours);
                         break;
 
+                    case "priority":
+                        int[] priArgs = Parser.parsePriority(input);
+                        Task updatedTask = tasks.updatePriority(priArgs[0], priArgs[1]);
+                        ui.showPriorityUpdated(updatedTask);
+                        break;
+
+
                     default:
                         if (Parser.isFreeTimeQuery(input)) {
                             int hours_2 = Parser.extractHoursFromSentence(input);

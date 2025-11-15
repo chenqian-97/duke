@@ -8,12 +8,13 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Storage {
-    private String filePath;
+    private final String filePath;
 
     public Storage(String filePath) {
         this.filePath = filePath;
     }
 
+    /** Load tasks from file into memory */
     public ArrayList<Task> load() throws IOException {
         ArrayList<Task> tasks = new ArrayList<>();
         File file = new File(filePath);
@@ -24,66 +25,96 @@ public class Storage {
             return tasks;
         }
 
-        Scanner scanner = new Scanner(file);
-        while (scanner.hasNextLine()) {
-            String line = scanner.nextLine().trim();
+        Scanner sc = new Scanner(file);
+        while (sc.hasNextLine()) {
+            String line = sc.nextLine().trim();
             if (line.isEmpty()) continue;
 
             String[] parts = line.split(" \\| ");
-            if (parts.length < 3) continue;
-
-            String type = parts[0];
-            boolean isDone = parts[1].equals("1");
-            String description = parts[2];
-            Task t = null;
-
             try {
+                String type = parts[0];
+                boolean isDone = parts[1].equals("1");
+                String description = parts[2];
+
+                Task task = null;
+
                 switch (type) {
-                    case "T":
-                        t = new Todo(description);
-                        break;
-                    case "D":
+                    case "T": // Todo
+                        task = new Todo(description);
                         if (parts.length >= 4) {
-                            t = new Deadline(description, parts[3]); // constructor will parse LocalDate
+                            task.setPriority(Integer.parseInt(parts[3]));
                         }
                         break;
-                    case "E":
+
+                    case "D": // Deadline
+                        if (parts.length >= 4) {
+                            task = new Deadline(description, parts[3]);
+                            if (parts.length >= 5) {
+                                task.setPriority(Integer.parseInt(parts[4]));
+                            }
+                        }
+                        break;
+
+                    case "E": // Event
                         if (parts.length >= 5) {
-                            t = new Event(description, parts[3], parts[4]); // both will parse LocalDate
+                            task = new Event(description, parts[3], parts[4]);
+                            if (parts.length >= 6) {
+                                task.setPriority(Integer.parseInt(parts[5]));
+                            }
                         }
                         break;
+
                     default:
-                        System.out.println("Unknown task type found: " + type);
+                        System.out.println("⚠️ Unknown task type in storage: " + type);
                 }
 
-                if (t != null && isDone) t.markAsDone();
-                if (t != null) tasks.add(t);
-            } catch (QianException e) {
+                if (task != null) {
+                    if (isDone) task.markAsDone();
+                    tasks.add(task);
+                }
+
+            } catch (Exception e) {
                 System.out.println("⚠️ Skipping corrupted line: " + line);
             }
         }
-        scanner.close();
+        sc.close();
         return tasks;
     }
 
+    /** Save tasks to file */
     public void save(ArrayList<Task> tasks) throws IOException {
         FileWriter fw = new FileWriter(filePath);
+
         for (Task t : tasks) {
-            String line = "";
+            StringBuilder sb = new StringBuilder();
 
             if (t instanceof Todo) {
-                line = "T | " + (t.isDone ? "1" : "0") + " | " + t.description;
-
-            } else if (t instanceof Deadline) {
-                Deadline d = (Deadline) t;
-                line = "D | " + (d.isDone ? "1" : "0") + " | " + d.description + " | " + d.getByRaw();
-
-            } else if (t instanceof Event) {
-                Event e = (Event) t;
-                line = "E | " + (e.isDone ? "1" : "0") + " | " + e.description + " | " + e.getFromRaw() + " | " + e.getToRaw();
+                sb.append("T | ")
+                        .append(t.isDone ? "1" : "0")
+                        .append(" | ").append(t.description)
+                        .append(" | ").append(t.getPriority());
             }
 
-            fw.write(line + System.lineSeparator());
+            if (t instanceof Deadline) {
+                Deadline d = (Deadline) t;
+                sb.append("D | ")
+                        .append(d.isDone ? "1" : "0")
+                        .append(" | ").append(d.description)
+                        .append(" | ").append(d.getByRaw())
+                        .append(" | ").append(d.getPriority());
+            }
+
+            if (t instanceof Event) {
+                Event e = (Event) t;
+                sb.append("E | ")
+                        .append(e.isDone ? "1" : "0")
+                        .append(" | ").append(e.description)
+                        .append(" | ").append(e.getFromRaw())
+                        .append(" | ").append(e.getToRaw())
+                        .append(" | ").append(e.getPriority());
+            }
+
+            fw.write(sb.toString() + System.lineSeparator());
         }
         fw.close();
     }

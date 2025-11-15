@@ -1,17 +1,5 @@
-T | 0 | taskABC
-T | 0 | bookBCD
-T | 0 | task CDE
-T | 0 | task EFG
-D | 0 | math homework | 2025-11-09T23:59
-E | 0 | attend course | 2025-11-11T10:00 | 2025-11-11T12:00
-E | 0 | group assignment disscussion | 2025-11-05T09:00 | 2025-11-05T18:00
-E | 0 | work at XXX | 2025-11-06T09:00 | 2025-11-06T12:00
-E | 0 | work at XXX | 2025-11-06T14:00 | 2025-11-06T18:00
-E | 0 | cycling | 2025-11-07T20:00 | 2025-11-07T23:00
-E | 0 | dinner celebration | 2025-11-08T20:00 | 2025-11-08T23:00
-E | 0 | work | 2025-11-07T09:00 | 2025-11-07T18:00
-E | 0 | sleep | 2025-11-04T22:00 | 2025-11-05T08:00
-E | 0 | work | 2025-11-05T09:00 | 2025-11-05T18:00
-E | 0 | gym | 2025-11-05T21:00 | 2025-11-05T22:00
-E | 0 | sleep | 2025-11-05T23:00 | 2025-11-06T08:00
-E | 0 | sleep | 2025-11-06T22:00 | 2025-11-07T08:00
+T | 0 | taskABC | 1
+T | 0 | bookBCD | 3
+T | 0 | task CDE | 2
+T | 0 | task EFG | 1
+T | 0 | read book | 3

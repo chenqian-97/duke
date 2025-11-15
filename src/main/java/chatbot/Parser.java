@@ -79,4 +79,19 @@ public class Parser {
         }
     }
 
+    public static int[] parsePriority(String input) throws QianException {
+        String[] parts = input.split(" ");
+        if (parts.length != 3) {
+            throw new QianException("Usage: priority <task number> <1|2|3>");
+        }
+        try {
+            int index = Integer.parseInt(parts[1]) - 1; // convert to 0-based
+            int level = Integer.parseInt(parts[2]);
+            return new int[]{index, level};
+        } catch (NumberFormatException e) {
+            throw new QianException("Task index and priority must be numbers.");
+        }
+    }
+
+
 }
