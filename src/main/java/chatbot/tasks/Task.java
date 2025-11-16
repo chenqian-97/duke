@@ -5,6 +5,12 @@ import chatbot.QianException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+/**
+ * Represents a general task with a description and completion status.
+ * Supports priority tagging and can be extended by specific task types.
+ */
+
+
 public abstract class Task {
     public String description;
     public boolean isDone;

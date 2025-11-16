@@ -17,6 +17,10 @@ public class TaskList {
         this.tasks = tasks;
     }
 
+    /**
+     * Adds a new task into the task list.
+     * @param task Task to be added
+     */
     public void addTask(Task task) {
         tasks.add(task);
     }
@@ -30,19 +34,36 @@ public class TaskList {
         System.out.println("Now you have " + tasks.size() + " tasks in the list.");
     }
 
+    /**
+     * Marks a task as done.
+     * @param index Index of task in the list
+     * @throws QianException If index is invalid
+     */
     public void markTask(int index) throws QianException {
-        if (index < 0 || index >= tasks.size())
+        if (index < 0 || index >= tasks.size()) {
             throw new QianException("That task number doesn't exist!");
+        }
+
+        assert index >= 0 && index < tasks.size() : "Index should be within tasks list bounds";
+
         Task t = tasks.get(index);
+        assert t != null : "Task retrieved from list should not be null";
+
         t.markAsDone();
         System.out.println("Nice! I've marked this task as done:");
         System.out.println("  " + t);
     }
 
     public void unmarkTask(int index) throws QianException {
-        if (index < 0 || index >= tasks.size())
+        if (index < 0 || index >= tasks.size()) {
             throw new QianException("That task number doesn't exist!");
+        }
+
+        assert index >= 0 && index < tasks.size() : "Index should be within tasks list bounds";
+
         Task t = tasks.get(index);
+        assert t != null : "Task retrieved from list should not be null";
+
         t.markAsNotDone();
         System.out.println("OK, I've marked this task as not done yet:");
         System.out.println("  " + t);
@@ -121,7 +142,11 @@ public class TaskList {
             throw new QianException("Task number is out of range!");
         }
 
+        assert taskIndex >= 0 && taskIndex < tasks.size() : "Task index must be valid";
+
         Task task = tasks.get(taskIndex);
+        assert task != null : "Task should not be null when updating priority";
+
         task.setPriority(priority);
         return task;
     }

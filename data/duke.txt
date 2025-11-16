@@ -1,5 +1,4 @@
-T | 0 | taskABC | 1
-T | 0 | bookBCD | 3
-T | 0 | task CDE | 2
-T | 0 | task EFG | 1
-T | 0 | read book | 3
+T | 0 | read book | 2
+D | 0 | submit project report | 2025-11-16T23:59 | 3
+E | 0 | attend birthday party | 2025-11-17T19:00 | 2025-11-17T23:00 | 3
+T | 1 | buy birthday gist (book) | 1

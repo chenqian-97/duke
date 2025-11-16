@@ -120,6 +120,9 @@ public class Qian {
         scanner.close();
     }
 
+    /**
+     * Runs the main interaction loop of the chatbot.
+     */
     public static void main(String[] args) {
         new Qian("data/duke.txt").run();
     }
